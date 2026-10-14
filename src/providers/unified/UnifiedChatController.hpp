@@ -27,6 +27,10 @@ namespace kick {
 class KickChatClient;
 }  // namespace kick
 
+namespace youtube {
+class YouTubeChatClient;
+}  // namespace youtube
+
 }  // namespace chatterino
 
 namespace chatterino::unified {
@@ -78,6 +82,7 @@ private:
     std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
 
     std::shared_ptr<kick::KickChatClient> kick_;
+    std::shared_ptr<youtube::YouTubeChatClient> youtube_;
 
     // Currently running configuration, empty when the client is stopped.
     QString runningKickSlug_;

@@ -458,6 +458,10 @@ set(SOURCE_FILES
         providers/unified/PlatformBadge.hpp
         providers/unified/UnifiedChatController.cpp
         providers/unified/UnifiedChatController.hpp
+        providers/youtube/YouTubeChatClient.cpp
+        providers/youtube/YouTubeChatClient.hpp
+        providers/youtube/YouTubeChatParser.cpp
+        providers/youtube/YouTubeChatParser.hpp
 
         providers/seventv/eventapi/Client.cpp
         providers/seventv/eventapi/Client.hpp

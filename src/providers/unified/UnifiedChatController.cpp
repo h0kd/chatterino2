@@ -18,6 +18,8 @@
 #include "providers/kick/KickChatClient.hpp"
 #include "providers/twitch/TwitchIrcServer.hpp"
 #include "providers/unified/PlatformBadge.hpp"
+#include "providers/youtube/YouTubeChatClient.hpp"
+#include "providers/youtube/YouTubeChatParser.hpp"
 #include "singletons/Settings.hpp"
 #include "util/Helpers.hpp"
 #include "util/PostToThread.hpp"
@@ -40,6 +42,8 @@ constexpr size_t MAX_SEEN_IDS = 500;
 /// thumbnails are smaller. Scale so that they render at roughly the same
 /// height as Twitch emotes (28px at 1x).
 constexpr qreal KICK_EMOTE_SCALE = 70.0 / 28.0;
+/// Largest YouTube custom emoji thumbnail is 48px; show it emoji-sized.
+constexpr qreal YOUTUBE_EMOTE_SCALE = 48.0 / 24.0;
 
 QString platformIdPrefix(ChatPlatform platform)
 {
@@ -58,7 +62,8 @@ QString platformIdPrefix(ChatPlatform platform)
 EmotePtr makeExternalEmote(ChatPlatform platform,
                            const ExternalChatFragment &fragment)
 {
-    qreal scale = platform == ChatPlatform::Kick ? KICK_EMOTE_SCALE : 1.0;
+    qreal scale =
+        platform == ChatPlatform::Kick ? KICK_EMOTE_SCALE : YOUTUBE_EMOTE_SCALE;
     return std::make_shared<const Emote>(Emote{
         .name = EmoteName{fragment.text},
         .images = ImageSet{Image::fromUrl(Url{fragment.emoteUrl}, scale)},
@@ -138,18 +143,24 @@ void UnifiedChatController::applySettings()
         }
     }
 
-    // YouTube
-    QString ytSource;
+    // YouTube: the "running" key includes the API key so that changing it
+    // restarts the client.
+    QString ytKey;
     if (enabled && s.unifiedChatYouTubeEnabled)
     {
-        ytSource = s.unifiedChatYouTubeSource.getValue().trimmed();
+        auto source = s.unifiedChatYouTubeSource.getValue().trimmed();
+        if (!source.isEmpty())
+        {
+            ytKey =
+                source % u"|" % s.unifiedChatYouTubeApiKey.getValue().trimmed();
+        }
     }
-    if (ytSource != this->runningYouTubeSource_)
+    if (ytKey != this->runningYouTubeSource_)
     {
         this->stopYouTube();
-        if (!ytSource.isEmpty())
+        if (!ytKey.isEmpty())
         {
-            this->startYouTube(ytSource);
+            this->startYouTube(ytKey);
         }
     }
 
@@ -201,11 +212,39 @@ void UnifiedChatController::stopKick()
     this->runningKickSlug_.clear();
 }
 
-void UnifiedChatController::startYouTube(const QString &source)
+void UnifiedChatController::startYouTube(const QString &key)
 {
-    // Fase 6 creates the YouTube client here.
-    qCInfo(LOG) << "YouTube: would connect to" << source;
-    this->runningYouTubeSource_ = source;
+    assertInGuiThread();
+    auto sourceText = key.section(u'|', 0, 0);
+    auto apiKey = key.section(u'|', 1, 1);
+    auto source = youtube::parseSource(sourceText);
+    if (!source)
+    {
+        this->addSystemMessage(u"YouTube: no entiendo \"" % sourceText %
+                               u"\". Usa @handle, URL del canal/video o "
+                               u"video ID."_s);
+        this->runningYouTubeSource_ = key;
+        return;
+    }
+    qCInfo(LOG) << "YouTube: starting client for" << sourceText;
+
+    std::weak_ptr<bool> alive = this->alive_;
+    this->youtube_ = std::make_shared<youtube::YouTubeChatClient>(
+        *source, apiKey,
+        [this, alive](ExternalChatMessage message) {
+            if (alive.lock())
+            {
+                this->enqueue(std::move(message));
+            }
+        },
+        [this, alive](const QString &text) {
+            if (alive.lock())
+            {
+                this->addSystemMessage(text);
+            }
+        });
+    this->youtube_->start();
+    this->runningYouTubeSource_ = key;
 }
 
 void UnifiedChatController::stopYouTube()
@@ -214,7 +253,13 @@ void UnifiedChatController::stopYouTube()
     {
         return;
     }
-    qCInfo(LOG) << "YouTube: disconnecting from" << this->runningYouTubeSource_;
+    qCInfo(LOG) << "YouTube: stopping client";
+    if (this->youtube_)
+    {
+        this->youtube_->stop();
+        this->youtube_.reset();
+        this->addSystemMessage(u"YouTube desconectado."_s);
+    }
     this->runningYouTubeSource_.clear();
 }
 
