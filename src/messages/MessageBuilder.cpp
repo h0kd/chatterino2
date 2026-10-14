@@ -42,6 +42,7 @@
 #include "providers/twitch/TwitchIrcServer.hpp"
 #include "providers/twitch/TwitchUsers.hpp"
 #include "providers/twitch/UserColor.hpp"
+#include "providers/unified/PlatformBadge.hpp"  // UNIFIED-CHAT
 #include "singletons/Resources.hpp"
 #include "singletons/Settings.hpp"
 #include "singletons/StreamerMode.hpp"
@@ -1887,6 +1888,14 @@ std::pair<MessagePtrMut, HighlightAlert> MessageBuilder::makeIrcMessage(
         if (shouldAddModerationElements)
         {
             builder.emplace<TwitchModerationElement>();
+        }
+
+        // UNIFIED-CHAT: platform icon before the Twitch badges
+        if (unified::showTwitchPlatformBadge(channel->getName()))
+        {
+            builder.emplace<BadgeElement>(
+                unified::platformBadge(unified::ChatPlatform::Twitch),
+                MessageElementFlag::BadgePlatform);
         }
 
         builder.appendTwitchBadges(tags, twitchChannel);

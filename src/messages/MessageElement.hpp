@@ -119,9 +119,12 @@ enum class MessageElementFlag : int64_t {
     // - FFZ donator badge
     BadgeFfz = (1LL << 19),
 
+    // UNIFIED-CHAT: platform icon (Twitch / Kick / YouTube) before the badges
+    BadgePlatform = (1LL << 34),
+
     Badges = BadgeGlobalAuthority | BadgePredictions | BadgeChannelAuthority |
              BadgeSubscription | BadgeVanity | BadgeChatterino | BadgeSevenTV |
-             BadgeFfz | BadgeSharedChannel | BadgeBttv,
+             BadgeFfz | BadgeSharedChannel | BadgeBttv | BadgePlatform,
 
     ChannelName = (1LL << 20),
 

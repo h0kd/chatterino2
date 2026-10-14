@@ -481,6 +481,28 @@ public:
     BoolSetting enableSevenTVEventAPI = {"/emotes/seventv/eventapi", true};
     BoolSetting sendSevenTVActivity = {"/emotes/seventv/sendActivity", true};
 
+    // UNIFIED-CHAT
+    BoolSetting unifiedChatEnabled = {"/unifiedChat/enabled", false};
+    QStringSetting unifiedChatTargetTwitchChannel = {
+        "/unifiedChat/targetTwitchChannel", ""};
+    BoolSetting unifiedChatShowPlatformBadges = {
+        "/unifiedChat/showPlatformBadges", true};
+    BoolSetting unifiedChatKickEnabled = {"/unifiedChat/kick/enabled", false};
+    QStringSetting unifiedChatKickChannelSlug = {
+        "/unifiedChat/kick/channelSlug", ""};
+    QStringSetting unifiedChatKickChatroomId = {"/unifiedChat/kick/chatroomId",
+                                                ""};
+    QStringSetting unifiedChatKickPusherKey = {"/unifiedChat/kick/pusherKey",
+                                               ""};
+    QStringSetting unifiedChatKickPusherCluster = {
+        "/unifiedChat/kick/pusherCluster", ""};
+    BoolSetting unifiedChatYouTubeEnabled = {"/unifiedChat/youtube/enabled",
+                                             false};
+    QStringSetting unifiedChatYouTubeSource = {"/unifiedChat/youtube/source",
+                                               ""};
+    QStringSetting unifiedChatYouTubeApiKey = {"/unifiedChat/youtube/apiKey",
+                                               ""};
+
     ChatterinoSetting<QStringList> favouriteEmotes = {
         "/emotes/favouriteEmotes",
         {},

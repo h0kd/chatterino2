@@ -859,6 +859,7 @@ c2.MessageElementFlag = {
     BadgeSevenTV = 0,
     BadgeBttv = 0,
     BadgeFfz = 0,
+    BadgePlatform = 0,
     Badges = 0,
     ChannelName = 0,
     BitsAmount = 0,
