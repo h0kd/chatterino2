@@ -65,6 +65,7 @@ private:
     StatusCallback onStatus_;
 
     bool stopped_{false};
+    QString lastStatus_;  // last text passed to status(), for de-duplication
     QString videoId_;
     QTimer timer_;  // single-shot driver for all delayed steps
 

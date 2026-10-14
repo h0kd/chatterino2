@@ -81,6 +81,7 @@ private:
     WebSocketHandle handle_;
     std::uint64_t generation_{0};
     bool stopped_{false};
+    QString lastStatus_;  // last text passed to status(), for de-duplication
     bool connected_{false};
     bool reconnectPending_{false};
     ExponentialBackoff<6> backoff_{std::chrono::milliseconds(1000)};

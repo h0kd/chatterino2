@@ -72,6 +72,7 @@ void YouTubeChatClient::start()
 {
     assertInGuiThread();
     this->stopped_ = false;
+    this->lastStatus_.clear();
     this->resolveVideo();
 }
 
@@ -105,6 +106,13 @@ void YouTubeChatClient::scheduleNext(int delayMs,
 
 void YouTubeChatClient::status(const QString &text)
 {
+    // Repeated identical states (e.g. "waiting for live" every minute) are
+    // only reported once so the chat is not flooded.
+    if (text == this->lastStatus_)
+    {
+        return;
+    }
+    this->lastStatus_ = text;
     if (this->onStatus_)
     {
         this->onStatus_(text);

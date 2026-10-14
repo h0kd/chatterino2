@@ -356,6 +356,12 @@ void KickChatClient::sendJson(const QByteArray &payload)
 
 void KickChatClient::status(const QString &text)
 {
+    // Identical consecutive states are only reported once.
+    if (text == this->lastStatus_)
+    {
+        return;
+    }
+    this->lastStatus_ = text;
     if (this->onStatus_)
     {
         this->onStatus_(text);
