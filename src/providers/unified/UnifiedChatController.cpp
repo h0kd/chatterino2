@@ -5,6 +5,7 @@
 #include "providers/unified/UnifiedChatController.hpp"
 
 #include "Application.hpp"
+#include "common/Aliases.hpp"
 #include "common/Channel.hpp"
 #include "common/Literals.hpp"
 #include "common/QLogging.hpp"
@@ -16,6 +17,7 @@
 #include "messages/Message.hpp"
 #include "messages/MessageElement.hpp"
 #include "providers/kick/KickChatClient.hpp"
+#include "providers/twitch/TwitchChannel.hpp"
 #include "providers/twitch/TwitchIrcServer.hpp"
 #include "providers/unified/PlatformBadge.hpp"
 #include "providers/youtube/YouTubeChatClient.hpp"
@@ -337,7 +339,9 @@ void UnifiedChatController::inject(const ExternalChatMessage &message)
         return;
     }
 
-    auto [built, alert] = buildMessage(message, channel->getName());
+    auto [built, alert] =
+        buildMessage(message, channel->getName(),
+                     dynamic_cast<TwitchChannel *>(channel.get()));
     if (!built)
     {
         return;
@@ -353,7 +357,8 @@ void UnifiedChatController::inject(const ExternalChatMessage &message)
 }
 
 std::pair<MessagePtr, HighlightAlert> UnifiedChatController::buildMessage(
-    const ExternalChatMessage &message, const QString &channelName)
+    const ExternalChatMessage &message, const QString &channelName,
+    TwitchChannel *twitchChannel)
 {
     assertInGuiThread();
     const auto &s = *getSettings();
@@ -396,11 +401,21 @@ std::pair<MessagePtr, HighlightAlert> UnifiedChatController::buildMessage(
                 makeExternalEmote(message.platform, fragment),
                 MessageElementFlag::Emote, MessageColor::Text);
         }
-        else if (!fragment.text.trimmed().isEmpty())
+        else
         {
-            builder.emplace<TextElement>(fragment.text.trimmed(),
-                                         MessageElementFlag::Text,
-                                         MessageColor::Text);
+            // Word by word so that FFZ/BTTV/7TV emotes of the target Twitch
+            // channel (and the global ones) also apply to external messages.
+            for (const auto &word :
+                 fragment.text.split(u' ', Qt::SkipEmptyParts))
+            {
+                if (builder.tryAppendThirdPartyEmote(twitchChannel,
+                                                     EmoteNameView{word}))
+                {
+                    continue;
+                }
+                builder.emplace<TextElement>(word, MessageElementFlag::Text,
+                                             MessageColor::Text);
+            }
         }
     }
 

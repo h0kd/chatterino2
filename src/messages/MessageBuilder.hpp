@@ -254,6 +254,14 @@ public:
     static MessagePtrMut makeCurrentPinnedMessage(
         const TwitchChannel &channel, const HelixPinnedChatMessage &pin);
 
+    // UNIFIED-CHAT: lets Kick/YouTube messages reuse the FFZ/BTTV/7TV lookup
+    // (channel emotes of `twitchChannel` first, then global ones).
+    Outcome tryAppendThirdPartyEmote(TwitchChannel *twitchChannel,
+                                     EmoteNameView name)
+    {
+        return this->tryAppendEmote(twitchChannel, name);
+    }
+
 private:
     struct TextState {
         TwitchChannel *twitchChannel = nullptr;

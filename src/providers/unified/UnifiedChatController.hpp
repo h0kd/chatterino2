@@ -55,9 +55,12 @@ public:
     void enqueue(ExternalChatMessage message);
 
     /// Builds the Chatterino message for an external message. Exposed for
-    /// tests. GUI thread (reads settings and resources).
+    /// tests. GUI thread (reads settings and resources). `twitchChannel` may
+    /// be null; when set, its FFZ/BTTV/7TV emotes (plus the global ones) are
+    /// applied to the text of the external message.
     static std::pair<MessagePtr, HighlightAlert> buildMessage(
-        const ExternalChatMessage &message, const QString &channelName);
+        const ExternalChatMessage &message, const QString &channelName,
+        TwitchChannel *twitchChannel);
 
 private:
     /// Re-reads the settings and starts/stops/restarts the platform clients
