@@ -448,6 +448,10 @@ set(SOURCE_FILES
         providers/seventv/SeventvEventAPI.cpp
         providers/seventv/SeventvEventAPI.hpp
         # UNIFIED-CHAT
+        providers/kick/KickChatClient.cpp
+        providers/kick/KickChatClient.hpp
+        providers/kick/KickChatParser.cpp
+        providers/kick/KickChatParser.hpp
         providers/unified/ExternalChatMessage.cpp
         providers/unified/ExternalChatMessage.hpp
         providers/unified/PlatformBadge.cpp

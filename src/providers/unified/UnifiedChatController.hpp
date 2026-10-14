@@ -6,15 +6,26 @@
 // their messages into the configured Twitch channel.
 #pragma once
 
+#include "messages/MessageBuilder.hpp"
 #include "providers/unified/ExternalChatMessage.hpp"
 
 #include <pajlada/signals/signalholder.hpp>
+#include <QSet>
+#include <QString>
 
+#include <array>
+#include <deque>
 #include <memory>
 
 namespace chatterino {
 
 class Settings;
+class Channel;
+using ChannelPtr = std::shared_ptr<Channel>;
+
+namespace kick {
+class KickChatClient;
+}  // namespace kick
 
 }  // namespace chatterino
 
@@ -39,6 +50,11 @@ public:
     /// message and adds it to the target channel on the GUI thread.
     void enqueue(ExternalChatMessage message);
 
+    /// Builds the Chatterino message for an external message. Exposed for
+    /// tests. GUI thread (reads settings and resources).
+    static std::pair<MessagePtr, HighlightAlert> buildMessage(
+        const ExternalChatMessage &message, const QString &channelName);
+
 private:
     /// Re-reads the settings and starts/stops/restarts the platform clients
     /// so that they match. GUI thread only.
@@ -49,11 +65,29 @@ private:
     void startYouTube(const QString &source);
     void stopYouTube();
 
+    /// GUI thread: dedup, build and add the message to the target channel.
+    void inject(const ExternalChatMessage &message);
+    /// Adds a system message to the target channel if it is open.
+    void addSystemMessage(const QString &text);
+    /// Returns true if `id` was not seen before for `platform` (and records it).
+    bool markSeen(ChatPlatform platform, const QString &id);
+    ChannelPtr targetChannel() const;
+
     pajlada::Signals::SignalHolder signalHolder_;
+    /// Expires when the controller is destroyed; posted callbacks check it.
+    std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
+
+    std::shared_ptr<kick::KickChatClient> kick_;
 
     // Currently running configuration, empty when the client is stopped.
     QString runningKickSlug_;
     QString runningYouTubeSource_;
+
+    struct SeenIds {
+        std::deque<QString> order;
+        QSet<QString> set;
+    };
+    std::array<SeenIds, 3> seen_;
 };
 
 }  // namespace chatterino::unified
