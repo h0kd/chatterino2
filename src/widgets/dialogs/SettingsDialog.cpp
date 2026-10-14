@@ -26,6 +26,7 @@
 #include "widgets/settingspages/NicknamesPage.hpp"
 #include "widgets/settingspages/NotificationPage.hpp"
 #include "widgets/settingspages/PluginsPage.hpp"
+#include "widgets/settingspages/UnifiedChatPage.hpp"  // UNIFIED-CHAT
 
 #include <QDialogButtonBox>
 #include <QLineEdit>
@@ -250,6 +251,7 @@ void SettingsDialog::addTabs()
     this->addTab([]{return new ModerationPage;},       "Moderation",     ":/settings/moderation.svg", SettingsTabId::Moderation);
     this->addTab([]{return new NotificationPage;},     "Live Notifications",  ":/settings/notification2.svg");
     this->addTab([]{return new ExternalToolsPage;},    "External tools", ":/settings/externaltools.svg");
+    this->addTab([]{return new UnifiedChatPage;},      "Unified Chat",   ":/settings/commands.svg"); // UNIFIED-CHAT
 #ifdef CHATTERINO_HAVE_PLUGINS
     this->addTab([]{return new PluginsPage;},          "Plugins",        ":/settings/plugins.svg");
 #endif

@@ -842,6 +842,9 @@ set(SOURCE_FILES
         widgets/settingspages/CustomWidgets.hpp
         widgets/settingspages/ExternalToolsPage.cpp
         widgets/settingspages/ExternalToolsPage.hpp
+        # UNIFIED-CHAT
+        widgets/settingspages/UnifiedChatPage.cpp
+        widgets/settingspages/UnifiedChatPage.hpp
         widgets/settingspages/FiltersPage.cpp
         widgets/settingspages/FiltersPage.hpp
         widgets/settingspages/GeneralPage.cpp

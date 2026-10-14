@@ -40,7 +40,20 @@ public:
     void enqueue(ExternalChatMessage message);
 
 private:
+    /// Re-reads the settings and starts/stops/restarts the platform clients
+    /// so that they match. GUI thread only.
+    void applySettings();
+
+    void startKick(const QString &slug);
+    void stopKick();
+    void startYouTube(const QString &source);
+    void stopYouTube();
+
     pajlada::Signals::SignalHolder signalHolder_;
+
+    // Currently running configuration, empty when the client is stopped.
+    QString runningKickSlug_;
+    QString runningYouTubeSource_;
 };
 
 }  // namespace chatterino::unified
