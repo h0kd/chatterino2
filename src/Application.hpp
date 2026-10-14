@@ -54,6 +54,12 @@ class BttvLiveUpdates;
 class FfzEmotes;
 class SeventvEmotes;
 class SeventvEventAPI;
+
+// UNIFIED-CHAT
+namespace unified {
+class UnifiedChatController;
+}  // namespace unified
+
 class ILinkResolver;
 class IStreamerMode;
 class ITwitchUsers;
@@ -188,6 +194,8 @@ private:
     std::unique_ptr<FfzEmotes> ffzEmotes;
     std::unique_ptr<SeventvEmotes> seventvEmotes;
     std::unique_ptr<SeventvEventAPI> seventvEventAPI;
+    std::unique_ptr<unified::UnifiedChatController>
+        unifiedChat;  // UNIFIED-CHAT
     std::unique_ptr<ILinkResolver> linkResolver;
     std::unique_ptr<IStreamerMode> streamerMode;
     std::unique_ptr<ITwitchUsers> twitchUsers;
@@ -244,6 +252,8 @@ public:
     FfzEmotes *getFfzEmotes() override;
     SeventvEmotes *getSeventvEmotes() override;
     SeventvEventAPI *getSeventvEventAPI() override;
+    /// UNIFIED-CHAT: not part of IApplication to keep the mocks untouched.
+    unified::UnifiedChatController *getUnifiedChat();
     pronouns::Pronouns *getPronouns() override;
     eventsub::IController *getEventSub() override;
 

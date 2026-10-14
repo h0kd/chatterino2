@@ -62,6 +62,8 @@ Q_LOGGING_CATEGORY(chatterinoTwitchEventSub, "chatterino.twitch.eventsub",
                    logThreshold);
 Q_LOGGING_CATEGORY(chatterinoTwitchLiveController,
                    "chatterino.twitch.livecontroller", logThreshold);
+Q_LOGGING_CATEGORY(chatterinoUnifiedChat, "chatterino.unified-chat",
+                   logThreshold);  // UNIFIED-CHAT
 Q_LOGGING_CATEGORY(chatterinoUpdate, "chatterino.update", logThreshold);
 Q_LOGGING_CATEGORY(chatterinoWebsocket, "chatterino.websocket", logThreshold);
 Q_LOGGING_CATEGORY(chatterinoWidget, "chatterino.widget", logThreshold);

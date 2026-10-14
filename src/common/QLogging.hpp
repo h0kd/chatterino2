@@ -48,6 +48,7 @@ Q_DECLARE_LOGGING_CATEGORY(chatterinoTokenizer);
 Q_DECLARE_LOGGING_CATEGORY(chatterinoTwitch);
 Q_DECLARE_LOGGING_CATEGORY(chatterinoTwitchEventSub);
 Q_DECLARE_LOGGING_CATEGORY(chatterinoTwitchLiveController);
+Q_DECLARE_LOGGING_CATEGORY(chatterinoUnifiedChat);  // UNIFIED-CHAT
 Q_DECLARE_LOGGING_CATEGORY(chatterinoUpdate);
 Q_DECLARE_LOGGING_CATEGORY(chatterinoWebsocket);
 Q_DECLARE_LOGGING_CATEGORY(chatterinoWidget);

@@ -50,6 +50,7 @@
 #include "providers/twitch/TwitchChannel.hpp"
 #include "providers/twitch/TwitchIrcServer.hpp"
 #include "providers/twitch/TwitchUsers.hpp"
+#include "providers/unified/UnifiedChatController.hpp"  // UNIFIED-CHAT
 #include "singletons/CrashHandler.hpp"
 #include "singletons/Fonts.hpp"
 #include "singletons/helper/LoggingChannel.hpp"
@@ -190,6 +191,7 @@ Application::Application(Settings &_settings, const Paths &paths,
     , ffzEmotes(new FfzEmotes)
     , seventvEmotes(new SeventvEmotes)
     , seventvEventAPI(makeSeventvEventAPI(_settings))
+    , unifiedChat(new unified::UnifiedChatController)  // UNIFIED-CHAT
     , linkResolver(new LinkResolver)
     , streamerMode(new StreamerMode)
     , twitchUsers(new TwitchUsers)
@@ -291,6 +293,8 @@ void Application::initialize(Settings &settings, const Paths &paths)
 
     this->twitch->initEventAPIs(this->bttvLiveUpdates.get(),
                                 this->seventvEventAPI.get());
+
+    this->unifiedChat->initialize(settings);  // UNIFIED-CHAT
 
     this->streamerMode->start();
 
@@ -579,6 +583,14 @@ SeventvEventAPI *Application::getSeventvEventAPI()
     return this->seventvEventAPI.get();
 }
 
+// UNIFIED-CHAT
+unified::UnifiedChatController *Application::getUnifiedChat()
+{
+    assertInGuiThread();
+
+    return this->unifiedChat.get();
+}
+
 pronouns::Pronouns *Application::getPronouns()
 {
     // pronouns::Pronouns handles its own locks, so we don't need to assert that this is called in the GUI thread
@@ -625,6 +637,7 @@ void Application::stop()
     this->twitchUsers.reset();
     this->streamerMode.reset();
     this->linkResolver.reset();
+    this->unifiedChat.reset();  // UNIFIED-CHAT
     this->seventvEventAPI.reset();
     this->seventvEmotes.reset();
     this->ffzEmotes.reset();

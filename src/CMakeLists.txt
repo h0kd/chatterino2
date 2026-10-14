@@ -447,6 +447,13 @@ set(SOURCE_FILES
         providers/seventv/SeventvEmotes.hpp
         providers/seventv/SeventvEventAPI.cpp
         providers/seventv/SeventvEventAPI.hpp
+        # UNIFIED-CHAT
+        providers/unified/ExternalChatMessage.cpp
+        providers/unified/ExternalChatMessage.hpp
+        providers/unified/PlatformBadge.cpp
+        providers/unified/PlatformBadge.hpp
+        providers/unified/UnifiedChatController.cpp
+        providers/unified/UnifiedChatController.hpp
 
         providers/seventv/eventapi/Client.cpp
         providers/seventv/eventapi/Client.hpp
