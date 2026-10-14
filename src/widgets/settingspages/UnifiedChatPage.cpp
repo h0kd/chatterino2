@@ -80,12 +80,12 @@ void UnifiedChatPage::initLayout(GeneralPageView &layout)
                                 s.unifiedChatKickChannelSlug, "ej. xqc")
             ->setDescription("El nombre que aparece en la URL kick.com/<slug>.")
             ->conditionallyEnabledBy(s.unifiedChatKickEnabled)
-            ->addToLayout(form);
+            ->addTo(layout, form);
         SettingWidget::lineEdit("Chatroom id (opcional)",
                                 s.unifiedChatKickChatroomId,
                                 "solo si Kick bloquea la consulta automatica")
             ->conditionallyEnabledBy(s.unifiedChatKickEnabled)
-            ->addToLayout(form);
+            ->addTo(layout, form);
 
         s.unifiedChatEnabled.connect(
             [box](const bool &value, const auto &) {
@@ -111,12 +111,12 @@ void UnifiedChatPage::initLayout(GeneralPageView &layout)
                 "Con un handle o URL de canal se busca la transmision en "
                 "vivo automaticamente.")
             ->conditionallyEnabledBy(s.unifiedChatYouTubeEnabled)
-            ->addToLayout(form);
+            ->addTo(layout, form);
         SettingWidget::lineEdit("API key de YouTube Data (opcional)",
                                 s.unifiedChatYouTubeApiKey,
                                 "respaldo; consume cuota diaria")
             ->conditionallyEnabledBy(s.unifiedChatYouTubeEnabled)
-            ->addToLayout(form);
+            ->addTo(layout, form);
 
         s.unifiedChatEnabled.connect(
             [box](const bool &value, const auto &) {
